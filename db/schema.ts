@@ -98,3 +98,13 @@ export interface SiteUser {
   wins: number;
   createdAt: string;
 }
+export const news = mysqlTable("news", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  imageUrl: varchar("image_url", { length: 255 }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export type News = typeof news.$inferSelect;
+export type InsertNews = typeof news.$inferInsert;
