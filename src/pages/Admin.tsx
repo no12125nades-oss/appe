@@ -63,10 +63,10 @@ export default function Admin() {
     }
   }, [adminToken, isAdmin]);
 
-  const handleAdminLogin = (e: React.FormEvent) => {
-  e.preventDefault();
-  loginMutation.mutate({ username: adminUser, password: adminPass });
-};
+     const handleAdminLogin = (e: React.FormEvent) => {
+     e.preventDefault();
+     loginMutation.mutate({ username: adminUser, password: adminPass });
+   };
  
   return (
       <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
