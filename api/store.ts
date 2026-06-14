@@ -211,11 +211,16 @@ export async function getNews(): Promise<News[]> {
 
 export async function addNews(item: Omit<News, "id" | "createdAt">): Promise<News> {
   const db = getDb();
-  // Исправлено: убрали деструктуризацию [result], так как в MySQL возвращается объект, а не массив
-  const result = await db.insert(newsTable).values(item);
-  const insertedId = (result as any).insertId || Math.floor(Math.random() * 1000);
-  return { id: insertedId, createdAt: new Date(), ...item } as News;
+  const generatedId = Math.floor(Math.random() * 1000000) + 1;
+  
+  await db.insert(newsTable).values({
+    id: generatedId,
+    ...item
+  });
+  
+  return { id: generatedId, createdAt: new Date(), ...item } as News;
 }
+
 
 export async function deleteNews(id: number): Promise<void> {
   await getDb().delete(newsTable).where(eq(newsTable.id, id));
