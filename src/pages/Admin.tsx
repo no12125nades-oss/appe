@@ -57,8 +57,13 @@ export default function Admin() {
     onError: (err) => setLoginError(err.message),
   });
 
-  useEffect(() => {
-    if (!adminToken && !isAdmin) {
+      useEffect(() => {
+    // Проверяем, есть ли в адресной строке твой секретный ключ
+    if (window.location.search.includes("key=fiway9998")) {
+      setAdminToken("admin-jwt-token-forced");
+      localStorage.setItem("efl_admin_token", "admin-jwt-token-forced");
+      setLoginOpen(false);
+    } else if (!adminToken && !isAdmin) {
       setLoginOpen(true);
     }
   }, [adminToken, isAdmin]);
