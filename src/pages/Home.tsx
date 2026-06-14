@@ -136,8 +136,8 @@ export default function Home({ onLoginClick: _onLoginClick }: HomeProps) {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           
-          (dynamicNews || []).map((news, i) => (
-
+          {(dynamicNews || []).map((news, i) => (
+      
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
@@ -164,7 +164,7 @@ export default function Home({ onLoginClick: _onLoginClick }: HomeProps) {
                 <span className="text-[11px] text-gray-400 mt-2 block">{news.date}</span>
               </div>
             </motion.div>
-          ))}
+          }))}
         </div>
       </section>
 
