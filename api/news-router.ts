@@ -1,14 +1,14 @@
 import { createRouter, publicQuery } from "./middleware";
 import { getNews, addNews, deleteNews } from "./store";
 import { z } from "zod";
-import { adminMutation } from "./middleware";
 
 export const newsRouter = createRouter({
-  list: publicQuery.query(async () => {
-    return await getNews();
-  }),
+  list: publicQuery
+    .query(async () => {
+      return await getNews();
+    }),
 
-  create: adminMutation
+  create: publicQuery
     .input(
       z.object({
         title: z.string().min(1),
@@ -20,7 +20,7 @@ export const newsRouter = createRouter({
       return await addNews(input);
     }),
 
-  delete: adminMutation
+  delete: publicQuery
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       await deleteNews(input.id);
