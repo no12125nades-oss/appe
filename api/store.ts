@@ -1,4 +1,5 @@
 import type { Team, Player, Match, SiteUser, MatchStat } from "../db/schema";
+import { news as newsTable } from "../db/schema";
 
 // Seed data for teams
 let teams: Team[] = [
