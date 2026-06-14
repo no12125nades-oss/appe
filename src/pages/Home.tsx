@@ -136,35 +136,36 @@ export default function Home({ onLoginClick: _onLoginClick }: HomeProps) {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           
-          {(dynamicNews || []).map((news, i) => (
-      
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-white dark:bg-[#1E1E1E] rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden group cursor-pointer"
-            >
-              <div className="aspect-video overflow-hidden">
-                <img
-                  src={news.img}
-                  alt={news.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="p-4">
-                <span className="inline-block px-2 py-0.5 bg-[#E8751A] text-white text-[10px] font-medium rounded mb-2">
-                  {news.cat}
-                </span>
-                <h3 className="text-sm font-semibold text-[#1A2332] dark:text-white line-clamp-2 mb-1">
-                  {news.title}
-                </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{news.desc}</p>
-                <span className="text-[11px] text-gray-400 mt-2 block">{news.date}</span>
-              </div>
-            </motion.div>
-          })}`
+                    {(dynamicNews || []).map((news: any, i: number) => {
+            return (
+              <motion.div code-path="src/pages/Home.tsx:141:13"
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white dark:bg-[#1E1E1E] rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
+              >
+                <div className="aspect-video overflow-hidden">
+                  <img src={news.imageUrl || news.img || "/news-1.jpg"} alt={news.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                </div>
+                <div className="p-4">
+                  <span className="text-[10px] font-bold tracking-wider uppercase text-[#E8751A] bg-[#E8751A]/10 px-2 py-0.5 rounded">
+                    {news.cat || "NEWS"}
+                  </span>
+                  <h3 className="text-base font-bold text-[#1A2332] dark:text-white mt-2 group-hover:text-[#E8751A] transition-colors line-clamp-2">
+                    {news.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                    {news.content || news.desc}
+                  </p>
+                  <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100 dark:border-[#333] text-[10px] text-gray-400">
+                    <span>{news.createdAt ? new Date(news.createdAt).toLocaleDateString() : (news.date || "")}</span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
