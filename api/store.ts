@@ -197,12 +197,22 @@ export const store = {
 };
 
 export async function getNews(): Promise<News[]> {
-  return await getDb().select().from(newsTable);
+  const db = getDb();
+  // Автоматический сидинг: если новостей в базе 0, создаем две дефолтные про s1zzi и Major
+  const existingNews = await db.select().from(newsTable).limit(1);
+  if (existingNews.length === 0) {
+    await db.insert(newsTable).values([
+      { title: "Украинский талант s1zzi из B8 заявляет о целях на топ-3 HLTV", content: "16-летний украинский снайпер Данило s1zzi Винник, выступающий за команду B8, серьезно нацелен на мировую вершину Counter-Strike 2. Молодой АWPer показывает невероятный уровень индивидуальной игры.", imageUrl: "/news-2.png" },
+      { title: "EFL Major 2025: Grand Finals Set", content: "Alpha Wolves and Dragon Gaming will face off in the championship match this weekend.", imageUrl: "/news-1.png" }
+    ]);
+  }
+  return await db.select().from(newsTable);
 }
 
 export async function addNews(item: Omit<News, "id" | "createdAt">): Promise<News> {
   const db = getDb();
-  const [result] = await db.insert(newsTable).values(item);
+  // Исправлено: убрали деструктуризацию [result], так как в MySQL возвращается объект, а не массив
+  const result = await db.insert(newsTable).values(item);
   const insertedId = (result as any).insertId || Math.floor(Math.random() * 1000);
   return { id: insertedId, createdAt: new Date(), ...item } as News;
 }
