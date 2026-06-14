@@ -62,12 +62,14 @@ export default function Admin() {
       setLoginOpen(true);
     }
   }, [adminToken, isAdmin]);
-const handleAdminLogin = (e: React.FormEvent) => {
+
+  const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
     loginMutation.mutate({ username: adminUser, password: adminPass });
   };
-  
-  return (
+
+  if (!adminToken && !isAdmin) {
+    return (
       <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
         <DialogContent className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-[#333]">
           <DialogHeader>
@@ -89,7 +91,7 @@ const handleAdminLogin = (e: React.FormEvent) => {
             </div>
             <div>
               <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Password</label>
-              <Input type="password" value={adminPass} onChange={(e) => setAdminPass(e.target.value)} placeholder="adminknjazx" className="mt-1 dark:bg-[#252525]" />
+              <Input type="password" value={adminPass} onChange={(e) => setAdminPass(e.target.value)} placeholder="password" className="mt-1 dark:bg-[#252525]" />
             </div>
             <Button type="submit" className="w-full bg-[#E8751A] hover:bg-[#D46615] text-white">
               {t("login", lang)}
