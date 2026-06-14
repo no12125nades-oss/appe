@@ -80,7 +80,7 @@ export async function deleteTeam(id: number): Promise<void> {
 export async function getPlayers(): Promise<Player[]> {
   try {
     const res: any = await getDb().execute(sql`SELECT * FROM players`);
-    return (res?.[0] || res || []) as Player[];
+    return (res?.rows || res || []) as Player[];
   } catch (e) {
     return fallbackPlayers;
   }
