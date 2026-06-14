@@ -4,6 +4,7 @@ import { teamsRouter } from "./teams-router";
 import { playersRouter } from "./players-router";
 import { matchesRouter } from "./matches-router";
 import { adminRouter } from "./admin-router";
+import { newsRouter } from "./news-router";
 import { createRouter, publicQuery } from "./middleware";
 
 export const appRouter = createRouter({
@@ -14,6 +15,7 @@ export const appRouter = createRouter({
   players: playersRouter,
   matches: matchesRouter,
   admin: adminRouter,
+  news: newsRouter,
 });
 
 export type AppRouter = typeof appRouter;
