@@ -118,6 +118,7 @@ export async function deleteNews(id: number): Promise<void> {
 export const matches = [];
 
 // Фикс для старых роутеров, которые ищут общий объект store
+// Абсолютно точный фикс для восстановления авторизации и админки
 export const store = {
   getTeams,
   addTeam,
@@ -127,5 +128,23 @@ export const store = {
   addNews,
   deleteNews,
   adminStore,
-  matches
+  matches,
+  
+  // Добавляем функции авторизации, которые ищет сайт
+  getSiteUserByUsername: async (username: string) => {
+    const db = getDb();
+    const res: any = await db.execute(sql`SELECT * FROM users WHERE name = ${username} LIMIT 1`);
+    const user = (res?.rows?.[0] || res?.[0] || null);
+    return user;
+  },
+  
+  createSiteUser: async (user: any) => {
+    const db = getDb();
+    const generatedId = Math.floor(Math.random() * 1000000) + 1;
+    await db.execute(sql`
+      INSERT INTO users (id, name, email, password_hash, role) 
+      VALUES (${generatedId}, ${user.username}, ${user.email}, ${user.password}, 'user')
+    `);
+    return { id: generatedId, ...user };
+  }
 };
