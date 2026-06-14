@@ -1,15 +1,14 @@
-import { router, publicProcedure, adminProcedure } from "./router";
+import { createRouter, publicQuery } from "./middleware";
 import { getNews, addNews, deleteNews } from "./store";
 import { z } from "zod";
+import { adminMutation } from "./middleware";
 
-export const newsRouter = router({
-  // Получение списка новостей для главной страницы
-  list: publicProcedure.query(async () => {
+export const newsRouter = createRouter({
+  list: publicQuery.query(async () => {
     return await getNews();
   }),
 
-  // Добавление новости (доступно только админу)
-  create: adminProcedure
+  create: adminMutation
     .input(
       z.object({
         title: z.string().min(1),
@@ -21,8 +20,7 @@ export const newsRouter = router({
       return await addNews(input);
     }),
 
-  // Удаление новости по ID (доступно только админу)
-  delete: adminProcedure
+  delete: adminMutation
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       await deleteNews(input.id);
