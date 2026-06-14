@@ -134,7 +134,7 @@ export const store = {
   getSiteUserByUsername: async (username: string) => {
     const db = getDb();
     const res: any = await db.execute(sql`SELECT * FROM users WHERE name = ${username} LIMIT 1`);
-    const user = (res?.rows?.[0] || res?.[0] || null);
+    const user = (res?.[0]?.[0] || res?.[0] || null);
     return user;
   },
   
