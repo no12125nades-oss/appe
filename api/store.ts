@@ -190,3 +190,27 @@ export const store = {
     }
   }
 };
+// ==========================================
+// УПРАВЛЕНИЕ НОВОСТЯМИ (Стабильный режим памяти)
+// ==========================================
+let memoryNews = [
+  { id: 1, title: "Украинский талант s1zzi из B8 заявляет о целях на топ-3 HLTV", content: "16-летний украинский снайпер Данило s1zzi Винник, выступающий за команду B8, серьезно нацелен на мировую вершину Counter-Strike 2. Молодой АWPer показывает невероятный уровень индивидуальной игры.", imageUrl: "/news-2.png", createdAt: new Date() },
+  { id: 2, title: "EFL Major 2025: Grand Finals Set", content: "Alpha Wolves and Dragon Gaming will face off in the championship match this weekend.", imageUrl: "/news-1.png", createdAt: new Date() }
+];
+
+export async function getNews(): Promise<News[]> {
+  return memoryNews as any;
+}
+
+export async function addNews(item: Omit<News, "id" | "createdAt">): Promise<News> {
+  const generatedId = Math.floor(Math.random() * 1000000) + 1;
+  const newArticle = { id: generatedId, createdAt: new Date(), ...item };
+  memoryNews.push(newArticle as any);
+  return newArticle as any;
+}
+
+export async function deleteNews(id: number): Promise<void> {
+  memoryNews = memoryNews.filter(item => item.id !== id);
+}
+
+export const matches = [];
