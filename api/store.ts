@@ -116,3 +116,16 @@ export async function deleteNews(id: number): Promise<void> {
 
 // Для совместимости со старым кодом ИИ-генератора
 export const matches = [];
+
+// Фикс для старых роутеров, которые ищут общий объект store
+export const store = {
+  getTeams,
+  addTeam,
+  getPlayers,
+  addPlayer,
+  getNews,
+  addNews,
+  deleteNews,
+  adminStore,
+  matches
+};
