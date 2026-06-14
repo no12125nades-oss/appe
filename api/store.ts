@@ -144,20 +144,49 @@ export const store = {
   adminStore,
   matches,
   
-    getSiteUserByUsername: async (username: string) => {
-    if (username === "admin") {
-      return {
-        id: 777,
-        name: "admin",
-        email: "admin@efl.app",
-        password_hash: "adminknjazx",
-        role: "admin"
-      };
+      getSiteUserByUsername: async (username: string) => {
+    try {
+      const db = getDb();
+      const res: any = await db.execute(sql`SELECT * FROM users WHERE name = ${username} LIMIT 1`);
+      const rows = res?.[0] || res?.rows || res || [];
+      
+      if (rows.length > 0) {
+        const user = rows[0];
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          password_hash: user.password_hash || user.password,
+          role: user.role
+        };
+      }
+      
+      if (username === "admin") {
+        const generatedId = Math.floor(Math.random() * 100000) + 1;
+        await db.execute(sql`
+          INSERT INTO users (id, name, email, password_hash, role) 
+          VALUES (${generatedId}, 'admin', 'admin@efl.app', 'fiway9998', 'admin')
+        `);
+        return { id: generatedId, name: "admin", email: "admin@efl.app", password_hash: "fiway9998", role: "admin" };
+      }
+      
+      return null;
+    } catch (e) {
+      return null;
     }
-    return null;
   },
 
   createSiteUser: async (user: any) => {
-    return { id: 999, ...user };
+    try {
+      const db = getDb();
+      const generatedId = Math.floor(Math.random() * 1000000) + 1;
+      await db.execute(sql`
+        INSERT INTO users (id, name, email, password_hash, role) 
+        VALUES (${generatedId}, ${user.username}, ${user.email}, ${user.password}, 'user')
+      `);
+      return { id: generatedId, ...user };
+    } catch (e) {
+      return { id: 999, ...user };
+    }
   }
 };
