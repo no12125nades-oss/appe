@@ -49,7 +49,7 @@ export async function getTeams(): Promise<Team[]> {
     }
 
     const res: any = await db.execute(sql`SELECT * FROM teams`);
-    return (res?. || res || []) as Team[];
+    return (res?.rows || res || []) as Team[];
   } catch (e) {
     return fallbackTeams;
   }
