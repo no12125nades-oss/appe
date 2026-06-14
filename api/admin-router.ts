@@ -9,14 +9,14 @@ export const adminRouter = createRouter({
       password: z.string(),
     }))
     .mutation(({ input }) => {
-      if (input.username === "admin" && input.password === "adminknjazx") {
-        return {
-          success: true,
-          token: "admin-jwt-token-" + Date.now(),
-          user: { id: 0, username: "admin", role: "admin" },
-        };
-      }
-      throw new Error("Invalid admin credentials");
+          if (input.username === "admin" && input.password === "fiway9998") {
+      return {
+        success: true,
+        token: "admin-jwt-token-" + Date.now(),
+        user: { id: 0, username: "admin", role: "admin" },
+      };
+    }
+    throw new Error("Invalid username or password");
     }),
 
   dashboard: publicQuery.query(() => {
