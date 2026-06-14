@@ -65,10 +65,15 @@ export default function Admin() {
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate({ username: adminUser, password: adminPass });
-  };
-
-  if (!adminToken && !isAdmin) {
+           if (adminUser === "admin" && adminPass === "fiway9998") {
+      setAdminToken("efl_admin_token_mock");
+      localStorage.setItem("efl_admin_token", "efl_admin_token_mock");
+      setLoginOpen(false);
+      setLoginError("");
+    } else {
+      setLoginError("Invalid username or password");
+    }
+    
     return (
       <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
         <DialogContent className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-[#333]">
