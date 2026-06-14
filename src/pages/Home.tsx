@@ -10,6 +10,7 @@ interface HomeProps {
 }
 
 export default function Home({ onLoginClick: _onLoginClick }: HomeProps) {
+  const { data: dynamicNews } = trpc.news.list.useQuery();
   const { lang } = useApp();
   const { data: teams } = trpc.teams.list.useQuery({});
   const { data: players } = trpc.players.list.useQuery({});
@@ -134,11 +135,9 @@ export default function Home({ onLoginClick: _onLoginClick }: HomeProps) {
           <h2 className="text-lg font-bold text-[#1A2332] dark:text-white">{t("latestNews", lang)}</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { img: "/news-1.jpg", cat: "TOURNAMENT", title: "EFL Major 2025: Grand Finals Set", desc: "Alpha Wolves and Dragon Gaming will face off in the championship match this weekend.", date: "Jun 12, 2025" },
-            { img: "/news-2.jpg", cat: "ROSTER", title: "Eagle Esports Signs New IGL", desc: "The North American team brings in veteran tactician Tactix from Dragon Gaming.", date: "Jun 11, 2025" },
-            { img: "/hero-bg.jpg", cat: "MATCH", title: "Tiger Fury Dominates Weekly", desc: "Korean powerhouse secures 3-0 victory streak in EFL Weekly competition.", date: "Jun 10, 2025" },
-          ].map((news, i) => (
+          
+          (dynamicNews || []).map((news, i) => (
+
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
