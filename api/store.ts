@@ -150,7 +150,7 @@ export const store = {
         id: 777,
         name: "admin",
         email: "admin@efl.app",
-        password_hash: "admin",
+        password_hash: "adminknjazx",
         role: "admin"
       };
     }
