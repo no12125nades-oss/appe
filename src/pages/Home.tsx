@@ -164,7 +164,7 @@ export default function Home({ onLoginClick: _onLoginClick }: HomeProps) {
                 <span className="text-[11px] text-gray-400 mt-2 block">{news.date}</span>
               </div>
             </motion.div>
-          }))}
+          })}
         </div>
       </section>
 
