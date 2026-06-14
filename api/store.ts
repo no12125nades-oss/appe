@@ -179,11 +179,33 @@ export const store = {
   },
 
   // Dashboard
-  getDashboardStats: () => ({
-    totalTeams: teams.length,
-    totalPlayers: players.length,
-    upcomingMatches: matches.filter(m => m.status === "upcoming").length,
-    liveMatches: matches.filter(m => m.status === "live").length,
-    finishedMatches: matches.filter(m => m.status === "finished").length,
-  }),
+    getDashboardStats: async () => {
+    const db = getDb();
+    const [teamsCount] = await db.select({ count: sql<number>`count(*)` }).from(teamsTable);
+    const [playersCount] = await db.select({ count: sql<number>`count(*)` }).from(playersTable);
+    const matchesList = matches;
+    
+    return {
+      totalTeams: teamsCount?.count || 0,
+      totalPlayers: playersCount?.count || 0,
+      upcomingMatches: matchesList.filter(m => m.status === "upcoming").length,
+      liveMatches: matchesList.filter(m => m.status === "live").length,
+      finishedMatches: matchesList.filter(m => m.status === "finished").length,
+    };
+  },
 };
+
+export async function getNews(): Promise<News[]> {
+  return await getDb().select().from(newsTable);
+}
+
+export async function addNews(item: Omit<News, "id" | "createdAt">): Promise<News> {
+  const db = getDb();
+  const [result] = await db.insert(newsTable).values(item);
+  const insertedId = (result as any).insertId || Math.floor(Math.random() * 1000);
+  return { id: insertedId, createdAt: new Date(), ...item } as News;
+}
+
+export async function deleteNews(id: number): Promise<void> {
+  await getDb().delete(newsTable).where(eq(newsTable.id, id));
+}
