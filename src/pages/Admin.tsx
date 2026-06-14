@@ -27,9 +27,10 @@ import {
   Pencil,
   Trash2,
   AlertCircle,
+  Newspaper,
 } from "lucide-react";
 
-type AdminTab = "dashboard" | "teams" | "players" | "matches";
+type AdminTab = "dashboard" | "teams" | "players" | "matches" | "news";
 
 export default function Admin() {
   const { lang, isAdmin } = useApp();
@@ -44,6 +45,7 @@ export default function Admin() {
   const { data: teams, refetch: refetchTeams } = trpc.teams.list.useQuery({});
   const { data: players, refetch: refetchPlayers } = trpc.players.list.useQuery({});
   const { data: matches, refetch: refetchMatches } = trpc.matches.list.useQuery({});
+  const { data: newsList, refetch: refetchNews } = trpc.news.list.useQuery(undefined, { enabled: !!adminToken });
 
   const loginMutation = trpc.admin.login.useMutation({
     onSuccess: (data) => {
@@ -113,6 +115,8 @@ export default function Admin() {
                 { key: "teams", label: t("teams", lang), icon: Shield },
                 { key: "players", label: t("players", lang), icon: Users },
                 { key: "matches", label: t("matches", lang), icon: Swords },
+                { key: "news", label: lang === "ru" ? "Новости" : "News", icon: Newspaper },
+      
               ] as { key: AdminTab; label: string; icon: any }[]).map((item) => (
                 <button
                   key={item.key}
@@ -137,6 +141,7 @@ export default function Admin() {
           {tab === "teams" && <TeamsTab teams={teams || []} lang={lang} refetch={refetchTeams} />}
           {tab === "players" && <PlayersTab players={players || []} teams={teams || []} lang={lang} refetch={refetchPlayers} />}
           {tab === "matches" && <MatchesTab matches={matches || []} teams={teams || []} lang={lang} refetch={refetchMatches} />}
+          {tab === "news" && <NewsTab newsList={newsList || []} lang={lang} refetch={refetchNews} />}
         </div>
       </div>
     </div>
@@ -447,6 +452,86 @@ function MatchesTab({ matches, teams, lang, refetch }: { matches: any[]; teams: 
             )}
             <div><label className="text-xs text-gray-500">{t("mapPool", lang)}</label><Input value={form.mapPool} onChange={(e) => setForm({ ...form, mapPool: e.target.value })} className="mt-1 dark:bg-[#252525]" /></div>
             <Button type="submit" className="w-full bg-[#E8751A] hover:bg-[#D46615] text-white">{t("save", lang)}</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+function NewsTab({ newsList, lang, refetch }: { newsList: any[]; lang: string; refetch: () => void }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [form, setForm] = useState({ title: "", content: "", imageUrl: "" });
+
+  const createMutation = trpc.news.create.useMutation({
+    onSuccess: () => {
+      refetch();
+      setModalOpen(false);
+      setForm({ title: "", content: "", imageUrl: "" });
+    }
+  });
+
+  const deleteMutation = trpc.news.delete.useMutation({ onSuccess: () => refetch() });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createMutation.mutate(form);
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-bold text-[#1A2332] dark:text-white">{lang === "ru" ? "Управление новостями" : "Manage News"}</h2>
+        <Button onClick={() => setModalOpen(true)} className="bg-[#E8751A] hover:bg-[#D46615] text-white flex items-center gap-1 text-xs px-3 py-1.5">
+          <Plus className="w-4 h-4" /> {lang === "ru" ? "Добавить новость" : "Add News"}
+        </Button>
+      </div>
+
+      <div className="bg-white dark:bg-[#1E1E1E] rounded-lg shadow-sm overflow-hidden">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-gray-50 dark:bg-[#252525] text-gray-600 dark:text-gray-400 text-xs font-medium uppercase border-b border-gray-100 dark:border-[#333]">
+            <tr>
+              <th className="px-4 py-3">{lang === "ru" ? "Заголовок" : "Title"}</th>
+              <th className="px-4 py-3">{lang === "ru" ? "Текст" : "Content"}</th>
+              <th className="px-4 py-3 text-right">{lang === "ru" ? "Действия" : "Actions"}</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100 dark:divide-[#333] text-gray-700 dark:text-gray-300">
+            {newsList.map((item) => (
+              <tr key={item.id} className="hover:bg-gray-50/50 dark:hover:bg-[#252525]/30">
+                <td className="px-4 py-3 font-medium">{item.title}</td>
+                <td className="px-4 py-3 max-w-xs truncate">{item.content}</td>
+                <td className="px-4 py-3 text-right">
+                  <button onClick={() => deleteMutation.mutate({ id: item.id })} className="text-red-500 hover:text-red-700 p-1">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-[#333] text-[#1A2332] dark:text-white">
+          <DialogHeader>
+            <DialogTitle>{lang === "ru" ? "Новая новость" : "New News Article"}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+            <div>
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{lang === "ru" ? "Заголовок" : "Title"}</label>
+              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required className="mt-1 dark:bg-[#252525]" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{lang === "ru" ? "Текст новости" : "Content"}</label>
+              <textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} required rows={4} className="w-full mt-1 p-2 border rounded-md text-sm bg-white dark:bg-[#252525] border-gray-200 dark:border-[#333] focus:outline-none focus:ring-1 focus:ring-[#E8751A]" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{lang === "ru" ? "Ссылка на картинку" : "Image URL"}</label>
+              <Input value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} placeholder="/news-1.png" className="mt-1 dark:bg-[#252525]" />
+            </div>
+            <Button type="submit" className="w-full bg-[#E8751A] hover:bg-[#D46615] text-white">
+              {lang === "ru" ? "Опубликовать" : "Publish"}
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
