@@ -470,7 +470,7 @@ function NewsTab({ newsList, lang, refetch }: { newsList: any[]; lang: string; r
     }
   });
 
-  const deleteMutation = trpc.news.delete.useMutation({ onSuccess: () => refetch() });
+  const deleteMutation = trpc.news.delete.useMutation({ onSuccess: () => refetchNews() });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
